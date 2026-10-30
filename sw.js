@@ -1,4 +1,4 @@
-const CACHE='ef5a-ipad-shell-v1.10.0';
+const CACHE='ef5a-ipad-shell-v1.10.1';
 const FILES=['./','./index.html','./style.css','./core.js','./app.js','./vendor/jspdf.umd.min.js','./vendor/DejaVuSans.ttf','./vendor/DejaVuSans-Bold.ttf','./report-pdf.js','./import-fiches.js','./manifest.webmanifest','./icons/apple-touch-icon.png','./icons/icon-192.png','./icons/icon-512.png','./GUIDE.html'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES.map(f=>new Request(new URL(f,self.registration.scope),{cache:'reload'})))))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('ef5a-ipad-shell-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

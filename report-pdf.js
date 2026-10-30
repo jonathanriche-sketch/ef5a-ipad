@@ -53,7 +53,7 @@ async function build(c,fontData,boldData){
  // La validation est conservée même lorsque le rapport comporte plusieurs pages.
  const validation=c.status==='validated'?c.validator+' · '+new Date(c.validated).toLocaleString('fr-FR'):'Brouillon non validé';const vrows=wrap(validation,174,9.5,true),vh=13+vrows.length*4.6;ensure(vh+4);box(margin,y,width,vh,'#F1F5F8');text(margin+5,y+4,'VALIDATION DU CONTRÔLE',7.5,navy,true);vrows.forEach((s,i)=>text(margin+5,y+10+i*4.6,s,9.5,ink,true));y+=vh+3;
  full('Identifiant du contrôle : '+c.id,7,muted);
- const n=pdf.getNumberOfPages();for(let i=1;i<=n;i++){pdf.setPage(i);pdf.setDrawColor(border);pdf.line(margin,284,198,284);text(margin,287,'EF5A · Jonathan RICHE',7,muted);font(7);pdf.setTextColor(muted);pdf.text(i+' / '+n,198,289.5,{align:'right'})}
+ const n=pdf.getNumberOfPages();for(let i=1;i<=n;i++){pdf.setPage(i);pdf.setDrawColor(border);pdf.line(margin,284,198,284);font(7);pdf.setTextColor(muted);pdf.text(i+' / '+n,198,289.5,{align:'right'})}
  pdf.setProperties({title:'Contrôle EF5A — '+c.site,author:'Jonathan RICHE',subject:f.title});return new Uint8Array(pdf.output('arraybuffer'));
 }
 function filename(c){const safe=s=>String(s||'controle').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,70);return 'EF5A_'+safe(c.site)+'_'+safe(c.control_date)+'.pdf'}
