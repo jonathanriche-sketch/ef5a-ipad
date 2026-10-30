@@ -1,0 +1,7 @@
+const vm=require('node:vm'),fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+const handlers={},stored=new Map();let deleted=[];
+const base='https://jonathanriche-sketch.github.io/ef5a-ipad/';
+const cache={addAll:async files=>{for(const f of files){const file=path.join(__dirname,'..',f==='./'?'index.html':f);assert.ok(fs.existsSync(file),file);stored.set(new URL(f,base).href,{body:f})}},match:async req=>stored.get(new URL(typeof req==='string'?req:req.url,base).href)};
+const context={URL,location:{origin:new URL(base).origin},self:{registration:{scope:base},clients:{claim:async()=>{}},addEventListener:(n,fn)=>handlers[n]=fn},caches:{open:async()=>cache,keys:async()=>['ef5a-ipad-shell-old','other-app'],delete:async k=>deleted.push(k)},fetch:async()=>{throw Error('Offline')}};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../sw.js'),'utf8'),context);
+(async()=>{let task;handlers.install({waitUntil:p=>task=p});await task;handlers.activate({waitUntil:p=>task=p});await task;assert.deepEqual(deleted,['ef5a-ipad-shell-old']);for(const file of ['','index.html','app.js','core.js','style.css','GUIDE.html']){handlers.fetch({request:{url:base+file,method:'GET',mode:'navigate'},respondWith:p=>task=p});assert.ok(await task)}console.log('Service worker : ressources présentes, cache et réponses hors réseau sous /ef5a-ipad/ OK (simulation Node, pas Safari).')})().catch(e=>{console.error(e);process.exit(1)});

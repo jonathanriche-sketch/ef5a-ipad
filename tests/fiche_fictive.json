@@ -1,0 +1,12 @@
+{
+  "kind": "EF5A_TEMPLATE_V1",
+  "record": {
+    "id": "fichetest123",
+    "code": "ESSAI",
+    "title": "Fiche de recette iPad",
+    "version": 1,
+    "status": "published",
+    "content": "{\"code\": \"ESSAI\", \"title\": \"Fiche de recette iPad\", \"subtitle\": \"Données fictives\", \"expert\": \"\", \"sections\": [{\"name\": \"Sécurité\", \"items\": [{\"id\": \"point1\", \"type\": \"CONTROLE\", \"label\": \"Vérifier le matériel\", \"modules\": \"A\", \"reference\": \"TEST\", \"instruction\": \"Essai de compatibilité\", \"details\": [\"État visuel\"]}, {\"id\": \"note1\", \"type\": \"NOTE\", \"label\": \"Note informative\", \"modules\": \"\", \"reference\": \"\", \"instruction\": \"\", \"details\": []}]}]}",
+    "created": "2026-10-30T12:00:00+00:00"
+  }
+}
