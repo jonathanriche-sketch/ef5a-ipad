@@ -1,0 +1,21 @@
+/* Interchange contract derived from Windows v1.7 server.py; no external dependency. */
+(function(root){
+'use strict';
+const clone=x=>JSON.parse(JSON.stringify(x));
+const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
+function requireThat(ok,msg){if(!ok)throw Error(msg)}
+function id(x){requireThat(typeof x==='string'&&/^[a-zA-Z0-9_-]{1,128}$/.test(x),'Identifiant JSON invalide');return x}
+function decoded(x){return typeof x==='string'?JSON.parse(x):clone(x)}
+function template(f){requireThat(object(f)&&typeof f.code==='string'&&typeof f.title==='string'&&Array.isArray(f.sections),'Fiche invalide');const seen=new Set();for(const s of f.sections){requireThat(typeof s.name==='string'&&Array.isArray(s.items),'Rubrique invalide');for(const i of s.items){id(i.id);requireThat(!seen.has(i.id),'Identifiant de point dupliqué');seen.add(i.id);requireThat(['CONTROLE','NOTE','TITRE'].includes(i.type)&&typeof i.label==='string'&&Array.isArray(i.details)&&i.details.every(x=>typeof x==='string'),'Point invalide');for(const k of ['modules','reference','instruction'])requireThat(typeof i[k]==='string','Champ de point invalide : '+k)}}return f}
+function answers(a,f){requireThat(object(a),'Réponses invalides');const items=new Map(f.sections.flatMap(s=>s.items).map(i=>[i.id,i]));for(const [k,v] of Object.entries(a)){requireThat(items.has(k)&&object(v),'Point de réponse inconnu');if(v.choice!==undefined)requireThat(['C','NC','SO','NV'].includes(v.choice),'Choix invalide');if(v.comment!==undefined)requireThat(typeof v.comment==='string','Commentaire invalide');if(v.details!==undefined)requireThat(Array.isArray(v.details)&&v.details.every(n=>Number.isInteger(n)&&n>=0&&n<items.get(k).details.length),'Détail invalide')}return a}
+function complete(c){return c.template_snapshot.sections.flatMap(s=>s.items).filter(i=>i.type==='CONTROLE').every(i=>['C','NC','SO','NV'].includes(c.answers[i.id]?.choice))}
+function inspection(r){let c=clone(r);c.__ef5a_wire??={};for(const k of ['template_snapshot','answers'])if(typeof c[k]==='string')c.__ef5a_wire[k]=c[k];id(c.id);id(c.template_id);c.template_snapshot=template(decoded(c.template_snapshot));c.answers=answers(decoded(c.answers),c.template_snapshot);for(const k of ['site','operator','created','updated'])requireThat(typeof c[k]==='string'&&c[k].trim(),'Champ obligatoire : '+k);for(const k of ['created','updated'])requireThat(Number.isFinite(Date.parse(c[k])),'Horodatage invalide');for(const k of ['control_date','accompanying_agents','collaboration_with']){c[k]??='';requireThat(typeof c[k]==='string','Champ invalide : '+k)}requireThat(['in_progress','validated'].includes(c.status),'Statut invalide');if(c.status==='validated')requireThat(typeof c.validator==='string'&&c.validator.trim()&&Number.isFinite(Date.parse(c.validated))&&complete(c),'Validation incomplète');return c}
+function parse(o){requireThat(object(o),'Objet JSON requis');if(o.kind==='EF5A_TEMPLATE_V1'){let r=clone(o.record);id(r.id);requireThat(typeof r.code==='string'&&typeof r.title==='string'&&Number.isInteger(r.version)&&r.version>0&&r.status==='published'&&typeof r.created==='string','Enregistrement de fiche invalide');r.__ef5a_wire??={};if(typeof r.content==='string')r.__ef5a_wire.content=r.content;r.content=template(decoded(r.content));return {type:'template',record:r}}
+if(o.kind==='EF5A_INSPECTION_V1')return {type:'inspection',record:inspection(o.record)};
+if(o.format==='CONTROLE_EF5A_V1'){id(o.id);requireThat(object(o.answers),'Réponses invalides');return {type:'backup',record:clone(o)}}
+throw Error('Format non pris en charge. Choisir un JSON de Fiches_types, Controles_en_cours ou Controles_valides.');}
+function wire(r,k){const raw=r.__ef5a_wire?.[k];if(typeof raw==='string'){try{if(JSON.stringify(JSON.parse(raw))===JSON.stringify(r[k]))return raw}catch{}}return JSON.stringify(r[k])}
+function pack(c){c=inspection(c);const record={...c,template_snapshot:wire(c,'template_snapshot'),answers:wire(c,'answers')};delete record.__ef5a_wire;return {kind:'EF5A_INSPECTION_V1',record}}
+function packTemplate(r){const record={...clone(r),content:wire(r,'content')};delete record.__ef5a_wire;return {kind:'EF5A_TEMPLATE_V1',record}}
+const api={parse,pack,packTemplate,inspection,template,answers,complete,clone};root.EF5A=api;if(typeof module!=='undefined')module.exports=api;
+})(globalThis);
