@@ -24,7 +24,7 @@ function importJSON(){const input=document.createElement('input');input.type='fi
 function network(){ $('#network').textContent=navigator.onLine?'Réseau disponible · échanges manuels':'Hors connexion'}
 addEventListener('online',network);addEventListener('offline',network);addEventListener('pagehide',()=>{saveCurrent().catch(()=>{})});addEventListener('visibilitychange',()=>{if(document.hidden)saveCurrent().catch(()=>{})});
 network();home().catch(e=>{$('#app').textContent='Stockage local indisponible : '+e.message});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').then(()=>navigator.serviceWorker.ready).then(async()=>{const cache=await caches.open('ef5a-ipad-shell-v1.8.1');const ok=await cache.match(new URL('./index.html',location.href).href);$('#notice').textContent=ok?'Application prête hors connexion · Les fichiers OneDrive doivent être disponibles sur cet iPad.':'Cache en préparation : garder cette page ouverte puis recharger.'}).catch(e=>{$('#notice').textContent='Mode hors connexion indisponible : '+e.message})}else $('#notice').textContent='Service worker indisponible : ouvrir via HTTPS.';
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').then(()=>navigator.serviceWorker.ready).then(async()=>{const cache=await caches.open('ef5a-ipad-shell-v1.8.2');const ok=await cache.match(new URL('./index.html',location.href).href);$('#notice').textContent=ok?'Application prête hors connexion · Les fichiers OneDrive doivent être disponibles sur cet iPad.':'Cache en préparation : garder cette page ouverte puis recharger.'}).catch(e=>{$('#notice').textContent='Mode hors connexion indisponible : '+e.message})}else $('#notice').textContent='Service worker indisponible : ouvrir via HTTPS.';
 function toast(msg,bad=false){let e=$('#toast');e.textContent=msg;e.style.background=bad?'#982d2d':'#18345d';e.style.display='block';setTimeout(()=>e.style.display='none',4000)}
 
 function show(html){$('#app').innerHTML=html;document.querySelectorAll('label').forEach((l,n)=>{const el=l.nextElementSibling;if(el&&['INPUT','TEXTAREA','SELECT'].includes(el.tagName)){el.id||='field-'+n;l.htmlFor=el.id}});scrollTo(0,0)}
@@ -71,9 +71,19 @@ async function printReport(){await saveCurrent();let c=current,f=c.template_snap
 
 
 async function importFiches(){
- const input=document.createElement('input');input.type='file';input.accept='.html,.htm,.csv,text/html,text/csv';input.multiple=true;input.hidden=true;
- input.onchange=async()=>{const messages=[];try{await saveCurrent();for(const file of input.files){try{const fiches=await EF5AFiches.read(file);for(const f of fiches)EF5A.template(f);for(const f of fiches){const existing=await all('templates');if(existing.some(t=>t.code===f.code&&EF5AFiches.signature(t.content)===EF5AFiches.signature(f))){messages.push('✓ '+file.name+' — '+f.code+' : fiche déjà importée');continue}
+ try{await saveCurrent();await refresh()}catch(e){return toast(e.message,true)}
+ show(back()+`<section class="panel"><h2>Importer une fiche HTML / CSV</h2><p>Choisir une fiche à la fois. Après sélection, la lecture démarre automatiquement.</p><label for="fiche-file">Fichier de la fiche</label><input id="fiche-file" type="file" accept=".html,.htm,.csv"><p id="fiche-progress" role="status" aria-live="polite">Aucun fichier reçu.</p><div id="fiche-result" style="white-space:pre-wrap"></div><p>Si le bouton « Ouvrir » reste sans effet dans Fichiers : copier d’abord la fiche dans « Sur mon iPad » ou « Sur mon iPhone », puis la sélectionner ici. Tu peux aussi essayer depuis Safari si tu utilises l’icône installée.</p><button class="secondary" onclick="listTemplates()">Voir les fiches importées</button></section>`);
+ const input=$('#fiche-file'),progress=$('#fiche-progress'),result=$('#fiche-result');
+ input.addEventListener('cancel',()=>{progress.textContent='Sélection annulée. Choisir un fichier pour réessayer.'});
+ input.onchange=async()=>{
+ const files=Array.from(input.files||[]);if(!files.length){progress.textContent='Aucun fichier reçu. Réessayer avec une copie locale.';return}
+ input.disabled=true;result.textContent='';const messages=[];
+ try{for(const file of files){progress.textContent='Fichier reçu : '+file.name+' — lecture en cours…';
+ try{const fiches=await EF5AFiches.read(file);for(const f of fiches)EF5A.template(f);
+ for(const f of fiches){const existing=await all('templates');if(existing.some(t=>t.code===f.code&&EF5AFiches.signature(t.content)===EF5AFiches.signature(f))){messages.push('✓ '+file.name+' — '+f.code+' : fiche déjà importée');continue}
  const version=Math.max(0,...existing.filter(t=>t.code===f.code).map(t=>t.version))+1;await put('templates',{id:uuid(),code:f.code,title:f.title,content:f,version,status:'published',created:now()});messages.push('✓ '+file.name+' — '+f.code+' : version '+version+' importée')}
- }catch(e){messages.push('✗ '+file.name+' : '+e.message)}}await home();const box=document.createElement('div');box.className='panel';box.style.whiteSpace='pre-wrap';box.textContent=messages.join('\n');$('#app').prepend(box)}catch(e){toast(e.message,true)}finally{input.remove()}};
- input.addEventListener('cancel',()=>input.remove(),{once:true});document.body.appendChild(input);input.click();
+ }catch(e){messages.push('✗ '+file.name+' : '+e.message)}}
+ progress.textContent=messages.some(m=>m.startsWith('✗'))?'Import terminé avec une erreur — voir le détail ci-dessous.':'Import terminé. La fiche est disponible pour créer un contrôle.';result.textContent=messages.join('\n');await refresh();
+ }catch(e){progress.textContent='Import interrompu : '+e.message}finally{input.disabled=false;input.value=''}
+ };
 }

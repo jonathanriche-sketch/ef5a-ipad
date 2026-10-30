@@ -48,7 +48,7 @@ function fromHTML(src){
  }
  return fromRows(rows);
 }
-async function read(file){const bytes=new Uint8Array(await file.arrayBuffer());let src;try{src=new TextDecoder('utf-8',{fatal:true}).decode(bytes)}catch{src=new TextDecoder('windows-1252').decode(bytes)}
+async function read(file){let timer;let data;try{data=await Promise.race([file.arrayBuffer(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Lecture du fichier bloquée. Télécharger ou copier la fiche dans Sur mon iPad / Sur mon iPhone puis réessayer.')),20000)})])}finally{clearTimeout(timer)}const bytes=new Uint8Array(data);let src;try{src=new TextDecoder('utf-8',{fatal:true}).decode(bytes)}catch{src=new TextDecoder('windows-1252').decode(bytes)}
  if(/\.csv$/i.test(file.name))return fromRows(csvRows(src));if(/\.html?$/i.test(file.name))return fromHTML(src);throw Error('Choisir une fiche .html, .htm ou .csv');}
 // Ignore random point IDs when detecting a re-import of an identical fiche.
 const signature=f=>JSON.stringify({...f,sections:f.sections.map(s=>({...s,items:s.items.map(({id,...i})=>i)}))});
