@@ -1,4 +1,4 @@
-# EF5A iPad PWA 1.9
+# EF5A iPad PWA 1.10
 
 Auteur : Jonathan RICHE.
 
@@ -8,7 +8,7 @@ Auteur : Jonathan RICHE.
 2. Partager → Sur l’écran d’accueil → Ajouter. Ouvrir l’icône et attendre « Application prête hors connexion ».
 3. Utiliser **Importer des fiches HTML / CSV**. Choisir les fiches EF5A originales dans Fichiers, sur l’iPad ou dans OneDrive. Aucun fichier JSON de fiche n’est nécessaire.
 4. Créer un contrôle : site, contrôleur, date, accompagnateurs et collaboration. Renseigner les réponses C / NC / SO / NV, détails et observations. Les sauvegardes sont locales et automatiques.
-5. Reprendre le contrôle ou le valider, puis **Créer le PDF / Partager**. Attendre « Rapport PDF prêt », puis toucher **Partager le PDF**. Choisir Mail, OneDrive ou Enregistrer dans Fichiers → OneDrive. Le bouton Télécharger le PDF reste disponible si le partage de fichiers est absent du navigateur.
+5. Reprendre le contrôle ou le valider, puis **Créer le PDF / Partager**. Attendre « Rapport PDF prêt », puis toucher **Partager le PDF**. Choisir Mail, OneDrive ou Enregistrer dans Fichiers → OneDrive. Le bouton Télécharger le PDF a été supprimé ; seul le partage est proposé.
 6. Le bouton Exporter JSON Windows a été retiré à la demande de l’utilisateur. Le PDF est un rapport consultable ; il ne permet pas de reprendre les réponses dans Windows. L’import de contrôles JSON Windows reste disponible.
 
 ## Fiches HTML et CSV
@@ -22,7 +22,7 @@ Auteur : Jonathan RICHE.
 
 ## Mise à jour depuis la v1.7
 
-Fermer tous les onglets EF5A et l’application installée, ouvrir l’adresse en ligne dans Safari, puis fermer et rouvrir l’application. Si l’ancienne version apparaît encore, fermer puis rouvrir une seconde fois après le téléchargement. Vérifier **PWA 1.9** en bas de page. Ne pas effacer les données Safari : les contrôles existants sont conservés dans le même stockage.
+Fermer tous les onglets EF5A et l’application installée, ouvrir l’adresse en ligne dans Safari, puis fermer et rouvrir l’application. Si l’ancienne version apparaît encore, fermer puis rouvrir une seconde fois après le téléchargement. Vérifier **PWA 1.10** en bas de page. Ne pas effacer les données Safari : les contrôles existants sont conservés dans le même stockage.
 
 ## Hors connexion et OneDrive
 
@@ -38,6 +38,8 @@ Envoyer le contenu de cette archive à la racine de `jonathanriche-sketch/ef5a-i
 
 Importer une fiche HTML puis CSV, créer un contrôle avec les nouveaux champs, répondre et cocher les détails, fermer puis reprendre, passer en mode avion puis rouvrir, valider et exporter vers OneDrive. Synchroniser Windows et comparer les réponses. Les tests automatisés ne remplacent pas cette recette Safari / iPadOS / OneDrive.
 
-## PDF v1.9
+## PDF v1.10 — Modèle A
 
 La génération utilise jsPDF et une police fournis dans vendor et mis en cache hors connexion. Aucun service distant ne reçoit le contenu du rapport. Attendre la fin de la génération, puis toucher Partager le PDF : cette deuxième action ouvre le partage iOS. Annuler le partage ne supprime pas le fichier proposé. Le succès de la feuille de partage ne garantit pas l’envoi effectif dans OneDrive ou Mail : vérifier dans l’application choisie.
+
+Modèle A validé : bandeau bleu, police en gras pour les titres, informations de visite regroupées, bilan C/NC/SO/NV, contrôles encadrés et colorés, pages de suite et validation finale. Le partage iOS conserve le même fonctionnement.
