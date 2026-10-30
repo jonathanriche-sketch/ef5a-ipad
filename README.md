@@ -1,54 +1,39 @@
-# EF5A iPad PWA 1.7
-Auteur : Jonathan RICHE. Adaptation de l’archive Windows v1.7 fournie le 30/10/2026.
-Application statique sans compte administrateur, sans serveur Python et sans dépendance distante.
+# EF5A iPad PWA 1.8
 
-## Publier dans jonathanriche-sketch/ef5a-ipad
-1. Décompresser cette archive sur un ordinateur.
-2. Ouvrir ou créer le dépôt https://github.com/jonathanriche-sketch/ef5a-ipad .
-3. Dans Code > Add file > Upload files, envoyer le **contenu** de l’archive à la racine du dépôt : index.html, app.js, core.js, style.css, sw.js, manifest.webmanifest, GUIDE.html et le dossier icons. Ne pas envoyer seulement le ZIP ni un dossier parent ef5a-ipad. Les autres fichiers de documentation peuvent rester dans le dépôt. Le fichier .nojekyll est fourni ; le conserver si possible.
-4. Commit changes sur la branche main.
-5. Settings > Pages > Build and deployment : Source = Deploy from a branch, Branch = main, dossier = /(root), puis Save.
-6. Attendre le succès du déploiement Pages (visible dans Actions et Settings > Pages).
-7. Ouvrir https://jonathanriche-sketch.github.io/ef5a-ipad/ . Le dépôt et l’adresse n’ont pas été créés ni publiés par cette livraison.
-8. Après une mise à jour, fermer tous les onglets EF5A et l’application installée, puis rouvrir : le nouveau service worker attend la fermeture des anciens clients. Pour les prochaines versions, changer CACHE dans sw.js **et** la valeur de cache dans app.js. Ne pas effacer les données Safari pour mettre à jour sans avoir exporté les contrôles.
+Auteur : Jonathan RICHE.
 
-GitHub Free demande habituellement un dépôt public pour Pages. Ne jamais publier de contrôles, de fiches confidentielles ou de données personnelles dans ce dépôt : les données de travail sont importées ensuite sur l’iPad, pas intégrées au site. Vérifier les options de visibilité de son abonnement GitHub.
+## Utilisation
 
-## Installer sur iPad
-Ouvrir l’adresse HTTPS dans Safari, Partager > Sur l’écran d’accueil, puis Ajouter (activer Ouvrir comme app web si proposé). Ouvrir ensuite l’icône et importer les fiches dans cette application installée. Attendre le bandeau « Application prête hors connexion ». Une première visite et l’installation du cache nécessitent Internet. Garder les données dans la même application : le stockage du site Safari peut être distinct de celui de l’icône installée.
+1. Ouvrir https://jonathanriche-sketch.github.io/ef5a-ipad/ dans Safari.
+2. Partager → Sur l’écran d’accueil → Ajouter. Ouvrir l’icône et attendre « Application prête hors connexion ».
+3. Utiliser **Importer des fiches HTML / CSV**. Choisir les fiches EF5A originales dans Fichiers, sur l’iPad ou dans OneDrive. Aucun fichier JSON de fiche n’est nécessaire.
+4. Créer un contrôle : site, contrôleur, date, accompagnateurs et collaboration. Renseigner les réponses C / NC / SO / NV, détails et observations. Les sauvegardes sont locales et automatiques.
+5. Reprendre le contrôle ou le valider, puis **Exporter JSON Windows**. Partager → Enregistrer dans Fichiers → OneDrive → EF5A/Controles_en_cours ou Controles_valides. Garder le nom ID.json.
+6. Sous Windows, synchroniser le stockage OneDrive pour récupérer le contrôle. Pour reprendre un contrôle Windows sur iPad, utiliser **Importer un contrôle JSON**, puis son JSON complet.
 
-## OneDrive et Fichiers
-1. Sous Windows v1.7, configurer le stockage et synchroniser pour produire EF5A/Fiches_types/*.json et les contrôles complets.
-2. Sur iPad, installer/configurer OneDrive, puis l’activer dans Fichiers > Parcourir > … > Modifier si nécessaire. Télécharger à l’avance les JSON nécessaires pour les avoir hors connexion.
-3. Dans EF5A, Importer JSON, puis Parcourir > OneDrive > EF5A/Fiches_types. Plusieurs fichiers peuvent être sélectionnés. Les fiches ne sont pas incluses dans l’archive Windows source : importer vos propres fiches.
-4. Créer un contrôle : site, contrôleur et date obligatoires ; accompagnateurs et collaboration facultatifs. Pour un contrôle Windows existant, importer son JSON complet depuis Controles_en_cours ou Controles_valides.
-5. Renseigner les choix, les détails et les observations. La sauvegarde est automatique sur l’iPad. Le bouton Sauvegarder enregistre également localement. Les informations de visite peuvent être modifiées avant validation. Les réponses d’un contrôle validé sont verrouillées.
-6. Valider seulement après avoir répondu à chaque point et saisi le nom du validateur. « Non vérifié » est une réponse acceptée, comme sous Windows. La validation est un verrou applicatif, pas une signature électronique certifiée.
-7. Exporter JSON Windows > Partager le JSON > Enregistrer dans Fichiers > OneDrive > EF5A/Controles_en_cours, ou Controles_valides après validation. À défaut, Télécharger le JSON et le déplacer avec Fichiers. Conserver **ID.json** comme nom, sans suffixe (1).
-8. Si le statut a changé, remplacer le fichier du même ID dans Controles_valides et retirer l’ancien exemplaire de Controles_en_cours **après avoir vérifié la copie**. Ne pas conserver deux fichiers divergents du même ID dans ces deux dossiers.
-9. Attendre la fin d’envoi OneDrive, puis synchroniser Windows. Il n’y a aucun transfert automatique de la PWA vers OneDrive, aucun chemin Windows à configurer sur l’iPad et aucun indicateur attestant l’envoi cloud.
+## Fiches HTML et CSV
 
-## Éviter et résoudre les conflits
-Ne modifier un même contrôle que sur un appareil à la fois. Importer la dernière version avant de changer d’appareil. La PWA demande confirmation avant de remplacer un contrôle en cours divergent ; exporter d’abord sa copie locale. Une fiche du même ID au contenu différent est refusée, et un contrôle local validé ne peut pas être remplacé.
-Windows refuse parfois un premier rapprochement si le même ID existe avec des différences et sans référence de synchronisation. Ne pas modifier les JSON ou effacer la base SQLite pour contourner cela : conserver les deux copies, choisir la version de référence et vérifier les messages Windows. Son moteur de conflits reste inchangé.
+- HTML : format métier EF5A reconnu par l’import Windows (`details.sec`, `.item`, `.it-t`, `.tag`, `.cons`, `.sub`). L’import conserve les titres, rubriques, références, consignes et points de détail ; il n’exécute pas les scripts de la fiche.
+- CSV : séparateur `;`, colonnes `Fiche;Titre;SousTitre;Expert;Section;Type;Libelle;Modules;Reference;Consigne`. Colonnes Fiche et Libelle obligatoires. Types CONTROLE, DETAIL, TITRE, NOTE et FICHE. Les lignes DETAIL suivent leur point CONTROLE. Guillemets, retours à la ligne, plusieurs fiches, UTF-8 et Windows-1252 acceptés.
+- Un HTML quelconque ne constitue pas une fiche EF5A ; les présentations simplifiées de Fiches_HTML générées par Windows peuvent ne pas contenir cette structure. Utiliser les fiches originales acceptées par l’import Windows ou leur CSV.
+- Réimporter une fiche identique ne la duplique pas. Un contenu différent du même code crée une nouvelle version ; les contrôles déjà créés gardent leur propre copie de la fiche.
+- Une fiche importée indépendamment dans Windows et sur iPad a des identifiants différents. Le contrôle exporté contient sa fiche complète et reste lisible par Windows ; ce n’est pas une fusion des deux bibliothèques de fiches.
+- Le JSON est réservé aux contrôles. Les anciennes fiches déjà enregistrées sur l’iPad restent disponibles.
 
-## Formats pris en charge
-Voir COMPATIBILITE.md. Le petit JSON du bouton Windows « Exporter sauvegarde JSON » n’est **pas** un contrôle complet. Il ne permet pas de créer un contrôle autonome : importer d’abord son contrôle complet, puis sa sauvegarde de réponses si nécessaire.
-Les imports HTML/CSV, l’édition des fiches et les fonctions administrateur restent dans Windows. L’iPad importe les fiches JSON publiées. Les suppressions Windows ne sont pas synchronisées automatiquement vers l’iPad : les fiches importées demeurent locales.
+## Mise à jour depuis la v1.7
 
-## Hors connexion et sauvegardes
-Le cache contient uniquement l’interface et le guide. IndexedDB contient les fiches et contrôles de travail. Sans Internet, créer/reprendre/valider est possible avec les fiches déjà importées. L’export peut être enregistré « Sur mon iPad », puis déplacé vers OneDrive au retour du réseau. OneDrive doit avoir téléchargé les fichiers avant un import hors connexion.
-Exporter après chaque visite : iPadOS peut évincer les données du site. Un export demeure une action manuelle ; l’application ne peut pas garantir que l’utilisateur a terminé la feuille de partage ou que OneDrive a envoyé le fichier. Ne pas utiliser la navigation privée.
+Fermer tous les onglets EF5A et l’application installée, ouvrir l’adresse en ligne dans Safari, puis fermer et rouvrir l’application. Si l’ancienne version apparaît encore, fermer puis rouvrir une seconde fois après le téléchargement. Vérifier **PWA 1.8** en bas de page. Ne pas effacer les données Safari : les contrôles existants sont conservés dans le même stockage.
 
-## Recette sur l’iPad réel avant utilisation
-- Installer l’icône, importer une fiche Windows, créer un contrôle avec les 3 nouveaux champs.
-- Renseigner C/NC/SO/NV, détails et commentaires ; fermer puis rouvrir et reprendre.
-- Passer en mode avion, fermer/rouvrir, poursuivre et valider ; vérifier le verrouillage.
-- Exporter vers Fichiers, puis OneDrive au retour du réseau ; importer/synchroniser sous Windows et comparer tous les champs.
-- Tester aussi Windows → iPad, une sauvegarde de réponses seule, une importation divergente et un JSON invalide.
-- Tester l’impression par Rapport PDF / Imprimer.
-Les tests de code ne remplacent pas cette recette Safari/iPadOS et OneDrive réels.
+## Hors connexion et OneDrive
 
-Références officielles à consulter en cas de changement de menus :
-https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
-https://support.apple.com/guide/ipad/bookmark-a-website-ipadc602b75b/ipados
+Une première visite en ligne est nécessaire pour charger le cache. Importer les fiches avant de partir. OneDrive doit avoir téléchargé les fichiers avant un import hors connexion. Créer, reprendre et valider fonctionnent avec les données déjà présentes ; les transferts OneDrive sont manuels. Exporter après chaque visite : iPadOS peut supprimer les données locales. Le stockage Safari peut être distinct de celui de l’application installée.
+
+Ne modifier un même contrôle que sur un appareil à la fois. Importer la dernière version avant de changer d’appareil. Après validation, conserver le fichier dans Controles_valides et retirer l’ancienne copie de Controles_en_cours après vérification. La validation verrouille les réponses ; ce n’est pas une signature électronique certifiée.
+
+## Publication
+
+Envoyer le contenu de cette archive à la racine de `jonathanriche-sketch/ef5a-ipad`, avec le dossier `icons`. Settings → Pages : Deploy from a branch → main → /(root) → Save. Aucun compte administrateur ni serveur Python sur iPad.
+
+## Recette sur iPad
+
+Importer une fiche HTML puis CSV, créer un contrôle avec les nouveaux champs, répondre et cocher les détails, fermer puis reprendre, passer en mode avion puis rouvrir, valider et exporter vers OneDrive. Synchroniser Windows et comparer les réponses. Les tests automatisés ne remplacent pas cette recette Safari / iPadOS / OneDrive.

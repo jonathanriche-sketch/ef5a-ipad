@@ -13,7 +13,7 @@ function inspection(r){let c=clone(r);c.__ef5a_wire??={};for(const k of ['templa
 function parse(o){requireThat(object(o),'Objet JSON requis');if(o.kind==='EF5A_TEMPLATE_V1'){let r=clone(o.record);id(r.id);requireThat(typeof r.code==='string'&&typeof r.title==='string'&&Number.isInteger(r.version)&&r.version>0&&r.status==='published'&&typeof r.created==='string','Enregistrement de fiche invalide');r.__ef5a_wire??={};if(typeof r.content==='string')r.__ef5a_wire.content=r.content;r.content=template(decoded(r.content));return {type:'template',record:r}}
 if(o.kind==='EF5A_INSPECTION_V1')return {type:'inspection',record:inspection(o.record)};
 if(o.format==='CONTROLE_EF5A_V1'){id(o.id);requireThat(object(o.answers),'Réponses invalides');return {type:'backup',record:clone(o)}}
-throw Error('Format non pris en charge. Choisir un JSON de Fiches_types, Controles_en_cours ou Controles_valides.');}
+throw Error('Format de contrôle non pris en charge. Choisir un JSON de Controles_en_cours ou Controles_valides.');}
 function wire(r,k){const raw=r.__ef5a_wire?.[k];if(typeof raw==='string'){try{if(JSON.stringify(JSON.parse(raw))===JSON.stringify(r[k]))return raw}catch{}}return JSON.stringify(r[k])}
 function pack(c){c=inspection(c);const record={...c,template_snapshot:wire(c,'template_snapshot'),answers:wire(c,'answers')};delete record.__ef5a_wire;return {kind:'EF5A_INSPECTION_V1',record}}
 function packTemplate(r){const record={...clone(r),content:wire(r,'content')};delete record.__ef5a_wire;return {kind:'EF5A_TEMPLATE_V1',record}}
